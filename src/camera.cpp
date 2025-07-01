@@ -1,21 +1,28 @@
 #include "camera.h"
 
-void camera::render(const hittable& world, int start_scanline, int end_scanline, std::vector<vec3> &output, int thread_id) {
+void camera::render(const hittable& world, int *current_scanline, std::vector<std::vector<vec3>> &output, int thread_id) {
+	
+	while(*current_scanline < this->image_height) {
+		mut.lock();
+		
+		int thread_scanline = *current_scanline;
+		*current_scanline = *current_scanline + 1;
 
-	for (int j=start_scanline; j < end_scanline; j++) {
-		std::clog << "Thread #" << thread_id << ": Scanlines left: " << (end_scanline-j) << "\n";
+		mut.unlock();
+
+		std::clog << "Thread #" << thread_id << " is generating scanlines #" << thread_scanline << "\n";
 		for (int i=0; i < image_width; i++) {
 			color pixel_color(0,0,0);
 			for(int sample=0; sample < samples_per_pixel; sample++) {
-				ray r = get_ray(i,j);
+				ray r = get_ray(i, thread_scanline);
 				pixel_color += ray_color(r, max_depth, world);
 			}
-
-			write_color(output, pixel_samples_scale * pixel_color);
+			write_color(output[thread_scanline], pixel_samples_scale * pixel_color);
 		}
 	}
 
-	std::clog << "Thread #" << thread_id << " Done.\n";
+	std::clog << "Thread #" << thread_id << "Finished\n";
+
 }
 
 void camera::initialize() {

@@ -7,9 +7,11 @@
 #include "material.h"
 #include "constant.h"
 
+#include <mutex>
+
 class camera {
 	public:
-		void render(const hittable& world, int start_scanline, int end_scanline,std::vector<vec3> &output, int thread_id);
+		void render(const hittable& world, int *current_scanline, std::vector<std::vector<vec3>> &output, int thread_id); 
 		void initialize();
 		color ray_color(const ray& r, int depth, const hittable& world) const;
 		ray get_ray(int i, int j) const;
@@ -37,6 +39,7 @@ class camera {
 		vec3 defocus_disk_v;
 
 		point3 defocus_disk_sample() const;
+		std::mutex mut;
 };
 
 #endif

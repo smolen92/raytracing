@@ -72,19 +72,15 @@ int main(int argc, char **argv) {
 	std::vector<std::thread> threads(cores_count);
 	
 	std::vector<std::vector<vec3>> output;
-	output.resize(cores_count);
-	
-	int number_of_scanlines_per_thread = cam.image_height/(cores_count);
+	output.resize(cam.image_height);
+
+	//shared data between threads
+	int current_scanline = 0;
 
 	//render
 	for( int i=0; i < threads.size(); i++) {
-		int start_scanline_number = i*number_of_scanlines_per_thread;
-		int end_scanline_number;
-		(i == threads.size()-1) ? end_scanline_number = cam.image_height : end_scanline_number = start_scanline_number + number_of_scanlines_per_thread-1;
-
-		threads[i] = std::thread(&camera::render, &cam, world, start_scanline_number, end_scanline_number, std::ref(output[i]), i);
+		threads[i] = std::thread(&camera::render, &cam, world, &current_scanline, std::ref(output), i);
 	}
-
 	
 	for(int i=0; i < threads.size(); i++) {
 		threads[i].join();
