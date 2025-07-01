@@ -2,9 +2,10 @@
 #define _HITLIST_H_
 
 #include "hittable.h"
-#include "interval.h"
 
-#include <vector>
+/// \file
+
+
 
 class hitlist : public hittable {
 	public:
@@ -14,8 +15,9 @@ class hitlist : public hittable {
 		hitlist(hittable* object);
 
 		void clear();
-		void add(hittable* object);
 
+		void add(hittable* object);
+		
 		bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
 };
 

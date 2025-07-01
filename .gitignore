@@ -1,4 +1,5 @@
 obj/
+doc/
 *.out
 *.ppm
 

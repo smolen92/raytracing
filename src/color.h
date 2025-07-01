@@ -2,10 +2,9 @@
 #define _COLOR_H_
 
 #include "vec.h"
-#include "constant.h"
 #include "interval.h"
 
-#include <vector>
+/// \file
 
 using color = vec3;
 

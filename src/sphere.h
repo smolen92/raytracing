@@ -1,10 +1,9 @@
 #ifndef _SPHERE_H_
 #define _SPHERE_H_
 
-#include "vec.h"
-#include "constant.h"
-#include "hittable.h"
 #include "material.h"
+
+/// \file
 
 class sphere : public hittable {
 	public:

@@ -2,9 +2,9 @@
 #define _HITTABLE_H_
 
 #include "ray.h"
-#include "vec.h"
-#include "constant.h"
 #include "interval.h"
+
+/// \file
 
 class material;
 

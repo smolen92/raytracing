@@ -1,13 +1,11 @@
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
-#include "hittable.h"
-#include "color.h"
-#include "vec.h"
 #include "material.h"
-#include "constant.h"
 
 #include <mutex>
+
+/// \file
 
 class camera {
 	public:

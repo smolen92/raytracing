@@ -1,13 +1,10 @@
-#include "constant.h"
-#include "hittable.h"
 #include "hitlist.h"
 #include "sphere.h"
-#include "color.h"
 #include "camera.h"
-#include "material.h"
 
 #include <thread>
-#include <vector>
+
+/// \file
 
 void stitch_image(std::vector<std::vector<vec3>> &input, int image_width, int image_height) {
 	std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";

@@ -3,6 +3,8 @@
 
 #include "constant.h"
 
+/// \file
+
 class interval {
 	public:
 		float min, max;

@@ -3,6 +3,8 @@
 
 #include "vec.h"
 
+/// \file
+
 class ray {
 	public:
 		ray();

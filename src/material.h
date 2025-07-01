@@ -4,6 +4,8 @@
 #include "hittable.h"
 #include "color.h"
 
+/// \file
+
 class material {
 	public:
 		virtual ~material() = default;

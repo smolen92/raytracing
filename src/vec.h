@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+/// \file
+
 class vec3 {
 	public:
 		float x,y,z;
