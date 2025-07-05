@@ -6,21 +6,10 @@
 
 /// \file
 
-void stitch_image(std::vector<std::vector<vec3>> &input, int image_width, int image_height) {
-	std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
 
-	for(int i=0; i < input.size(); i++) {
-		for(int j=0; j < input[i].size(); j++) {
-			static const interval intensity(0.000,0.999);
-			int rbyte = int(256 * intensity.clamp(input[i][j].x));
-			int gbyte = int(256 * intensity.clamp(input[i][j].y));
-			int bbyte = int(256 * intensity.clamp(input[i][j].z));
-		
-			std::cout << rbyte << " " << gbyte << " " << bbyte << "\n";
-		}
-	}
-
-}
+/// \todo make documentation of the code in doxygen
+/// \todo create readme
+/// \todo get the name for output file from argv
 
 int main(int argc, char **argv) {
 
@@ -64,26 +53,30 @@ int main(int argc, char **argv) {
 	camera cam;
 
 	cam.initialize();
-
+	
 	int cores_count = std::thread::hardware_concurrency();
 	std::vector<std::thread> threads(cores_count);
 	
-	std::vector<std::vector<vec3>> output;
-	output.resize(cam.image_height);
-
-	//shared data between threads
-	int current_scanline = 0;
-
+	color *output;
+	output = new color[cam.image_width*cam.image_height];
+	
+	for(int i=0; i < cam.image_width*cam.image_height; i++) {
+		output[i] = vec3(0,0,0);
+	}
+	
 	//render
 	for( int i=0; i < threads.size(); i++) {
-		threads[i] = std::thread(&camera::render, &cam, world, &current_scanline, std::ref(output), i);
+		threads[i] = std::thread(&camera::render, &cam, world, std::ref(output), i);
 	}
 	
 	for(int i=0; i < threads.size(); i++) {
 		threads[i].join();
 	}
 	
-	stitch_image(output, cam.image_width, cam.image_height);
+	cam.save_ppm("output.ppm", &output[0]);
+
+	delete output;
+	output = nullptr;
 
 	world.clear();
 

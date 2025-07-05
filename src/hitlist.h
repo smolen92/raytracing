@@ -5,8 +5,6 @@
 
 /// \file
 
-
-
 class hitlist : public hittable {
 	public:
 		std::vector<hittable*> objects;

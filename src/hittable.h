@@ -6,7 +6,10 @@
 
 /// \file
 
+/// \cond
 class material;
+/// \endcond
+
 
 class hit_record {
 	public:
@@ -20,6 +23,9 @@ class hit_record {
 
 };
 
+/**
+ * @brief hittable class that object will inherited from
+ */
 class hittable {
 	public:
 		virtual ~hittable() = default;

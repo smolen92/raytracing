@@ -1,6 +1,5 @@
 #include "hitlist.h"
 
-
 hitlist::hitlist() {
 }
 
@@ -13,11 +12,6 @@ void hitlist::clear() {
 		delete objects[i];
 		objects[i] = nullptr;
 	}
-
-	/*while( !objects.empty() ) {
-		delete objects.back();
-		objects.pop_back();
-	}*/
 }
 			
 void hitlist::add(hittable* object) {

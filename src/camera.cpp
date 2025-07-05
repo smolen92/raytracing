@@ -1,12 +1,12 @@
 #include "camera.h"
 
-void camera::render(const hittable& world, int *current_scanline, std::vector<std::vector<vec3>> &output, int thread_id) {
+void camera::render(const hittable& world, color *output, int thread_id) {
 	
-	while(*current_scanline < this->image_height) {
+	while(current_scanline < this->image_height) {
 		mut.lock();
 		
-		int thread_scanline = *current_scanline;
-		*current_scanline = *current_scanline + 1;
+		int thread_scanline = current_scanline;
+		current_scanline += 1;
 
 		mut.unlock();
 
@@ -17,12 +17,11 @@ void camera::render(const hittable& world, int *current_scanline, std::vector<st
 				ray r = get_ray(i, thread_scanline);
 				pixel_color += ray_color(r, max_depth, world);
 			}
-			write_color(output[thread_scanline], pixel_samples_scale * pixel_color);
+			write_color(&output[thread_scanline*this->image_width + i], pixel_samples_scale * pixel_color);
 		}
 	}
 
 	std::clog << "Thread #" << thread_id << "Finished\n";
-
 }
 
 void camera::initialize() {
@@ -39,7 +38,12 @@ void camera::initialize() {
 	image_height = (int)(image_width / aspect_ratio);
 	image_height = (image_height < 1) ? 1 : image_height;
 
+	samples_per_pixel = 500;
+	max_depth = 50;
 	vfov = 20;
+	
+	current_scanline = 0;
+
 	float theta = deg_to_rad(vfov);
 	float h = std::tan(theta/2);
 	float viewport_height = 2 * h * focus_dist;
@@ -59,10 +63,8 @@ void camera::initialize() {
 	point3 viewport_upper_left = center - (focus_dist * w) - viewport_u/2 - viewport_v/2;
 	pixel00_loc = viewport_upper_left + 0.5*(pixel_delta_u + pixel_delta_v);
 
-	samples_per_pixel = 500;
 	pixel_samples_scale = 1.0 / samples_per_pixel;
 
-	max_depth = 50;
 
 	float defocus_radius = focus_dist * std::tan(deg_to_rad(defocus_angle/2));
 	defocus_disk_u = u * defocus_radius;
@@ -110,5 +112,35 @@ vec3 camera::sample_square() const {
 point3 camera::defocus_disk_sample() const {
 	vec3 p = random_in_unit_disk();
 	return center + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
+}
+
+int camera::save_ppm(const char* filename, color *output) {
+	
+	int fileDesriptor = open(filename, O_CREAT|O_WRONLY|O_TRUNC, 0664);
+	if( fileDesriptor == -1) {
+		std::clog << "Error while opening file: " << filename << "\n";
+		return 1;
+	}
+	
+	std::string head = "P3\n" + std::to_string(this->image_width) + " " + std::to_string(this->image_height) + "\n255\n";
+	write(fileDesriptor, head.c_str(), head.length()); 
+
+	for(int i=0; i < this->image_width*this->image_height; i++) {
+		
+		static const interval intensity(0.000,0.999);
+		int rbyte = int(256 * intensity.clamp(output[i].x));
+		int gbyte = int(256 * intensity.clamp(output[i].y));
+		int bbyte = int(256 * intensity.clamp(output[i].z));
+		
+		std::string temp = std::to_string(rbyte) + " " + std::to_string(gbyte) + " " + std::to_string(bbyte) + "\n";
+
+		write(fileDesriptor, temp.c_str(), temp.length());
+	}
+	
+	if( close(fileDesriptor) == -1) {
+		std::clog << "Error while closing file\n";
+	}
+
+	return 0;
 }
 

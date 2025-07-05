@@ -8,7 +8,7 @@ float linear_to_gamma(float linear_component) {
 	return 0;
 }
 
-void write_color(std::vector<vec3> &out, const color& pixel_color){	
+void write_color(vec3 *out, const color& pixel_color){	
 	float r = pixel_color.x;
 	float g = pixel_color.y;
 	float b = pixel_color.z;
@@ -17,8 +17,7 @@ void write_color(std::vector<vec3> &out, const color& pixel_color){
 	g = linear_to_gamma(g);
 	b = linear_to_gamma(b);
 
-	
-	out.push_back(vec3(r,g,b));
+	*out = vec3(r,g,b);
 
 }
 

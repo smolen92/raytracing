@@ -6,10 +6,23 @@
 
 /// \file
 
+///cond
 using color = vec3;
+///endcond
 
-void write_color(std::vector<vec3> &out, const color& pixel_color);
+/**
+ * @brief write and convert color to output
+ * @param pixel_color color to convert and write
+ * @param out pointer to ouput vec
+ * \todo check this if it could be merged with linear to gamma function
+ */
+void write_color(vec3 *out, const color& pixel_color);
 
+/**
+ * @brief convert color from linear space to gamma space
+ * @param linear_component color to convert
+ * @return converted gamma value
+ */
 float linear_to_gamma(float linear_component);
 
 #endif

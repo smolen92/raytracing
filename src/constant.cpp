@@ -13,4 +13,3 @@ float random_double(float min, float max) {
 	return min + (max-min)*random_double();
 }
 
-
