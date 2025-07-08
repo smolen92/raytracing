@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 		threads[i].join();
 	}
 	
-	cam.save_ppm("output.ppm", &output[0]);
+	cam.save_bmp("output.bmp", &output[0]);
 
 	delete output;
 	output = nullptr;

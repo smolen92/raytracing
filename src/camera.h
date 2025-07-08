@@ -7,6 +7,7 @@
 #include <unistd.h> //write
 #include <string>
 #include <mutex>
+#include <cstdint>
 
 /// \file
 
@@ -42,7 +43,7 @@ class camera {
 		
 		/**
 		 *
-		 * save the generated image to a file in ppm format
+		 * @brief save the generated image to a file in ppm format
 		 *
 		 * @param filename name of the generated file
 		 * @param output pointer to output buffer
@@ -55,7 +56,7 @@ class camera {
 		int save_ppm(const char* filename, color *output);
 		/**
 		 *
-		 * save the generated image to a file in bmp format
+		 * @brief save the generated image to a file in bmp format (24-bit bitmap)
 		 *
 		 * @param filename name of the generated file
 		 * @param output pointer to output buffer
@@ -63,7 +64,6 @@ class camera {
 		 * @return 0 at success
 		 * @return 1 at failure
 		 * 
-		 * \todo implement this function
 		 */
 		int save_bmp(const char* filename, color *output);
 		

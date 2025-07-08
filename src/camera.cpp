@@ -144,3 +144,85 @@ int camera::save_ppm(const char* filename, color *output) {
 	return 0;
 }
 
+int camera::save_bmp(const char* filename, color *output) {
+	
+	int fileDesriptor = open(filename, O_CREAT|O_WRONLY|O_TRUNC, 0664);
+	if( fileDesriptor == -1) {
+		std::clog << "Error while opening file: " << filename << "\n";
+		return 1;
+	}
+	
+	uint8_t header[] = {//BMP Header
+			0x42, 0x4D, //ID field
+			0x00, 0x00, 0x00, 0x00, //size of BMP, need to be overwritten 
+			0x00, 0x00, // Unused
+			0x00, 0x00, // Unused
+			0x36, 0x00, 0x00, 0x00, //offset to pixel array
+			//DIB Header
+			0x28, 0x00, 0x00, 0x00, //bytes in DIB header
+			0x00, 0x00, 0x00, 0x00, //width of bitmap in pixel, need to be overwritten
+			0x00, 0x00, 0x00, 0x00, //height of bitmap in pixel, need to be overwritten
+			0x01, 0x00, //number of color planes
+			0x18, 0x00, //bits per pixel
+			0x00, 0x00, 0x00, 0x00, //no pixel array compression
+			0x00, 0x00, 0x00, 0x00, //size of raw bitmap data, need to be overwritten
+			0x13, 0x0B, 0x00, 0x00, //print resolution (horizontal) 72DPI
+			0x13, 0x0B, 0x00, 0x00, //print resolution (vertical) 72DPI
+			0x00, 0x00, 0x00, 0x00, //colors in palette
+			0x00, 0x00, 0x00, 0x00  //important color
+			};
+	
+	uint8_t blank = 0x00; //used for padding
+	
+	int bytes_per_pixel=3;
+	int padding = (image_width*bytes_per_pixel)%4; //4 byte alignment
+	int bitmap_array_size_with_padding = image_width*image_height*bytes_per_pixel + image_height*padding; 
+	int size_of_bmp = sizeof(header) + bitmap_array_size_with_padding;
+	
+	header[2] = size_of_bmp & 0xFF; 
+	header[3] = (size_of_bmp >> 0x08) & 0xFF; 
+	header[4] = (size_of_bmp >> 0x10) & 0xFF;
+	header[5] = (size_of_bmp >> 0x18) & 0xFF;
+
+	header[18] = image_width & 0xFF; 
+	header[19] = (image_width >> 0x08) & 0xFF; 
+	header[20] = (image_width >> 0x10) & 0xFF;
+	header[21] = (image_width >> 0x18) & 0xFF;
+	
+	header[22] = image_height & 0xFF; 
+	header[23] = (image_height >> 0x08) & 0xFF; 
+	header[24] = (image_height >> 0x10) & 0xFF;
+	header[25] = (image_height >> 0x18) & 0xFF;
+
+	header[34] = bitmap_array_size_with_padding & 0xFF; 
+	header[35] = (bitmap_array_size_with_padding >> 0x08) & 0xFF; 
+	header[36] = (bitmap_array_size_with_padding >> 0x10) & 0xFF;
+	header[37] = (bitmap_array_size_with_padding >> 0x18) & 0xFF;
+	
+	write(fileDesriptor, header, sizeof(header));
+	
+	for(int j=image_height-1; j >= 0; j--) {
+		for(int i=0; i < image_width; i++) {
+		
+			static const interval intensity(0.000,0.999);
+			int rbyte = int(256 * intensity.clamp(output[i + j*image_width].x));
+			int gbyte = int(256 * intensity.clamp(output[i + j*image_width].y));
+			int bbyte = int(256 * intensity.clamp(output[i + j*image_width].z));
+		
+			write(fileDesriptor, &bbyte, sizeof(uint8_t));
+			write(fileDesriptor, &gbyte, sizeof(uint8_t));
+			write(fileDesriptor, &rbyte, sizeof(uint8_t));
+		}
+
+		for(int i=0; i < padding; i++) {
+			write(fileDesriptor, &blank, sizeof(uint8_t));
+		}
+	}
+
+	if( close(fileDesriptor) == -1) {
+		std::clog << "Error while closing file\n";
+	}
+
+	return 0;
+}
+
