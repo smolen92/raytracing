@@ -29,7 +29,6 @@ class camera {
 		 * @brief generate raytraced image
 		 *
 		 * @param world reference to world class with object to render
-		 * @param current_scanline scanline pointer to scaline to render, muss be set to zero, used in multithreading 
 		 * @param output pointer to output buffer
 		 * @param thread_id id of thread that is rendering scaline
 		 * 

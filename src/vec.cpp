@@ -49,10 +49,6 @@ bool vec3::near_zero() const {
 	return (std::fabs(x) < s) && (std::fabs(y) < s) && (std::fabs(z) < s);
 }
 
-std::ostream& operator<<(std::ostream& out, const vec3& v) {
-	return out << v.x << " " << v.y << " " << v.z;
-}
-
 vec3 random_unit_vector() {
 	while(true) {
 		vec3 temp;
