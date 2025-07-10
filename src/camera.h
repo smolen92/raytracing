@@ -36,7 +36,7 @@ class camera {
 		 * current_scanline is used for multithreading to avoid race condition
 		 * therad_id is used only for logging purpose\
 		 *
-		 * \bug if samples_per_pixel is small render will produce darker image 
+		 * \bug if samples_per_pixel is small render will produce darker image - pixel_samples_scale is calculated in initialize function, if samples_per_pixel is assigned another value, pixel_samples_scale isn't recalculated 
 		 */
 		void render(const hittable& world, color *output, int thread_id); 
 		

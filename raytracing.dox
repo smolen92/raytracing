@@ -1036,7 +1036,8 @@ FILE_PATTERNS          = *.c \
                          *.cxx \
                          *.cxxm \
                          *.cppm \
-                         *.ccm \
+                         *.cpp \
+			 *.ccm \
                          *.c++ \
                          *.c++m \
                          *.java \

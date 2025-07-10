@@ -21,7 +21,7 @@ void camera::render(const hittable& world, color *output, int thread_id) {
 		}
 	}
 
-	std::clog << "Thread #" << thread_id << "Finished\n";
+	std::clog << "Thread #" << thread_id << " Finished\n";
 }
 
 void camera::initialize() {

@@ -10,7 +10,6 @@
 /// \todo make documentation of the code in doxygen
 /// \todo create readme
 /// \todo get the name for output file from argv
-
 int main(int argc, char **argv) {
 
 	//world
@@ -59,23 +58,19 @@ int main(int argc, char **argv) {
 	
 	color *output;
 	output = new color[cam.image_width*cam.image_height];
-	
-	for(int i=0; i < cam.image_width*cam.image_height; i++) {
-		output[i] = vec3(0,0,0);
-	}
-	
+
 	//render
-	for( int i=0; i < threads.size(); i++) {
+	for( uint32_t i=0; i < threads.size(); i++) {
 		threads[i] = std::thread(&camera::render, &cam, world, std::ref(output), i);
 	}
 	
-	for(int i=0; i < threads.size(); i++) {
+	for(uint32_t i=0; i < threads.size(); i++) {
 		threads[i].join();
 	}
 	
 	cam.save_bmp("output.bmp", &output[0]);
-
-	delete output;
+	
+	delete[] output;
 	output = nullptr;
 
 	world.clear();

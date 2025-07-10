@@ -3,6 +3,8 @@
 
 #include "hittable.h"
 
+#include <cstdint>
+
 /// \file
 
 class hitlist : public hittable {
