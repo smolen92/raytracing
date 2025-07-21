@@ -6,10 +6,9 @@
 
 /// \file
 
-
-/// \todo make documentation of the code in doxygen
 /// \todo create readme
 /// \todo get the name for output file from argv
+/// \todo revision of the documentation - delete unnecessary doc, include the math equation used for calculation
 int main(int argc, char **argv) {
 
 	//world
@@ -23,7 +22,6 @@ int main(int argc, char **argv) {
 		for(int b=-11; b < 11; b++) {
 			float choose_mat = random_double();
 			point3 center(a + 0.9*random_double(), 0.2, b+0.9*random_double());
-			//generated material is not deleted
 			if((center - point3(4,0.2,0)).length() > 0.9) {
 				if(choose_mat < 0.8) {
 					//diffuse

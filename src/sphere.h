@@ -24,13 +24,11 @@ class sphere : public hittable {
 		 * @brief check if ray intersect with the sphere
 		 *
 		 * @param r ray to check the intersection with
-		 * @param ray_t 
-		 * @param rec   
+		 * @param ray_t interval that the collision have to be within
+		 * @param rec if ray intersect the sphere, information of the collision will be stored in this reference
 		 *
 		 * @return true if ray intersect the sphere
 		 * @return false if ray doesn't intersect the sphere
-		 *
-		 * \todo finish documentation for this function
 		 */
 		bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
 		~sphere();

@@ -110,7 +110,11 @@ vec3 cross(const vec3& u, const vec3& v);
  * @return unit vector of vector v
  */
 vec3 get_unit_vector(const vec3& v);
-
+/**
+ * @param normal normal vector of the surface of the object
+ *
+ * @return random vector within hemisphere
+ */
 vec3 random_on_hemisphere(const vec3& normal);
 /**
  * @brief generate random unit vector
@@ -118,10 +122,24 @@ vec3 random_on_hemisphere(const vec3& normal);
  * @return random unit vector
  */
 vec3 random_unit_vector();
-
-
+/**
+ * @param v vector ot reflect
+ * @param n normal vector of the surface of the object
+ *
+ * @return reflected vector
+ */
 vec3 reflect(const vec3& v, const vec3& n);
+/**
+ * @param uv vector to refract
+ * @param n normal vector to of surface of the object
+ * @param etai_over_etat division of the refractive indices of the two materials
+ *
+ * @return refracted vector
+ */ 
 vec3 refract(const vec3& uv, const vec3& n, float etai_over_etat);
+/**
+ * @return random vector in defocus disk 
+ */
 vec3 random_in_unit_disk();
 
 #endif

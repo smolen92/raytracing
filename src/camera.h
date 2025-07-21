@@ -20,9 +20,27 @@ class camera {
 		 * @brief initialize camera parameters with default parameters
 		 */
 		void initialize();
-
+		
+		/**
+		 * @param r ray that you want the color for
+		 * @param depth current depth of the ray (maximum number of bounce per ray) 
+		 * @param world reference to hittable class that store all objects that can be hit
+		 * 
+		 * @return color for a given ray
+		 */
 		color ray_color(const ray& r, int depth, const hittable& world) const;
+		
+		/**
+		 * @param i x coordinate of pixel
+		 * @param j y coordinate of pixel
+		 *
+		 * @return random ray around pixel location
+		 */
 		ray get_ray(int i, int j) const;
+
+		/**
+		 * @return will return random point from square [-5,-5] to square [5,5] 
+		 */
 		vec3 sample_square() const;
 
 		/**
