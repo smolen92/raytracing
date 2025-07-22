@@ -6,6 +6,7 @@
 #include <fcntl.h> //open
 #include <unistd.h> //write
 #include <string>
+#include <string.h>
 #include <mutex>
 #include <cstdint>
 
@@ -58,9 +59,10 @@ class camera {
 		 */
 		void render(const hittable& world, color *output, int thread_id); 
 		
+
 		/**
 		 *
-		 * @brief save the generated image to a file in ppm format
+		 * @brief save the generated image to a file
 		 *
 		 * @param filename name of the generated file
 		 * @param output pointer to output buffer
@@ -70,19 +72,31 @@ class camera {
 		 *
 		 * \todo do not overwrite file if it already exit, but create one with number sufix
 		 */
-		int save_ppm(const char* filename, color *output);
+		int save(const char* filename, const color *output);
+		/**
+		 *
+		 * @brief save the generated image to a file in ppm format
+		 *
+		 * @param fd file descriptor of a file
+		 * @param output pointer to output buffer
+		 * 
+		 * @return 0 at success
+		 * @return 1 at failure
+		 *
+		 */
+		int save_ppm(const int fd, const color *output);
 		/**
 		 *
 		 * @brief save the generated image to a file in bmp format (24-bit bitmap)
 		 *
-		 * @param filename name of the generated file
+		 * @param fd file descriptor of a file
 		 * @param output pointer to output buffer
 		 * 
 		 * @return 0 at success
 		 * @return 1 at failure
 		 * 
 		 */
-		int save_bmp(const char* filename, color *output);
+		int save_bmp(const int fd, const color *output);
 		
 		/// \cond
 		int image_width;

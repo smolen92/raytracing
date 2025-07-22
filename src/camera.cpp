@@ -114,16 +114,49 @@ point3 camera::defocus_disk_sample() const {
 	return center + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
 }
 
-int camera::save_ppm(const char* filename, color *output) {
-	
+int camera::save(const char* filename, const color *output) {
+
 	int fileDesriptor = open(filename, O_CREAT|O_WRONLY|O_TRUNC, 0664);
 	if( fileDesriptor == -1) {
 		std::clog << "Error while opening file: " << filename << "\n";
 		return 1;
 	}
+
+	int return_value = 0;
+	int filename_length = strlen(filename);
+
+	if(filename_length < 4) {
+		std::clog << "Incorrect filename\n";
+		return 1;
+	}
+	
+	if( strcmp( ".bmp" , &filename[filename_length-4]) == 0) {
+		return_value = this->save_bmp(fileDesriptor, output);
+	}
+	else if( strcmp( ".ppm" , &filename[filename_length-4]) == 0) {
+		return_value = this->save_ppm(fileDesriptor, output);
+	}
+	else {
+		std::cout << "Error: unsupported image format\n";
+		return_value = 1;
+	}
+
+	if( close(fileDesriptor) == -1) {
+		std::clog << "Error while closing file\n";
+		return 1;
+	}
+
+	return return_value;
+
+}
+
+int camera::save_ppm(const int fd, const color *output) {
 	
 	std::string head = "P3\n" + std::to_string(this->image_width) + " " + std::to_string(this->image_height) + "\n255\n";
-	write(fileDesriptor, head.c_str(), head.length()); 
+	if( write(fd, head.c_str(), head.length()) == -1) {
+		std::clog << "Error: failed to write to file\n";
+		return 1;
+	}
 
 	for(int i=0; i < this->image_width*this->image_height; i++) {
 		
@@ -134,23 +167,17 @@ int camera::save_ppm(const char* filename, color *output) {
 		
 		std::string temp = std::to_string(rbyte) + " " + std::to_string(gbyte) + " " + std::to_string(bbyte) + "\n";
 
-		write(fileDesriptor, temp.c_str(), temp.length());
-	}
-	
-	if( close(fileDesriptor) == -1) {
-		std::clog << "Error while closing file\n";
+		if( write(fd, temp.c_str(), temp.length()) == -1) {
+			std::clog << "Error: failed to write to file\n";
+			return 1;
+		}
 	}
 
 	return 0;
+	
 }
 
-int camera::save_bmp(const char* filename, color *output) {
-	
-	int fileDesriptor = open(filename, O_CREAT|O_WRONLY|O_TRUNC, 0664);
-	if( fileDesriptor == -1) {
-		std::clog << "Error while opening file: " << filename << "\n";
-		return 1;
-	}
+int camera::save_bmp(const int fd, const color *output) {
 	
 	uint8_t header[] = {//BMP Header
 			0x42, 0x4D, //ID field
@@ -199,7 +226,10 @@ int camera::save_bmp(const char* filename, color *output) {
 	header[36] = (bitmap_array_size_with_padding >> 0x10) & 0xFF;
 	header[37] = (bitmap_array_size_with_padding >> 0x18) & 0xFF;
 	
-	write(fileDesriptor, header, sizeof(header));
+	if( write(fd, header, sizeof(header)) == -1) {
+		std::clog << "Error: failed to write to file\n";
+		return 1;
+	}
 	
 	for(int j=image_height-1; j >= 0; j--) {
 		for(int i=0; i < image_width; i++) {
@@ -209,18 +239,24 @@ int camera::save_bmp(const char* filename, color *output) {
 			int gbyte = int(256 * intensity.clamp(output[i + j*image_width].y));
 			int bbyte = int(256 * intensity.clamp(output[i + j*image_width].z));
 		
-			write(fileDesriptor, &bbyte, sizeof(uint8_t));
-			write(fileDesriptor, &gbyte, sizeof(uint8_t));
-			write(fileDesriptor, &rbyte, sizeof(uint8_t));
+			if( write(fd, &bbyte, sizeof(uint8_t)) == -1 ) {
+				std::clog << "Error: failed to write to file\n";
+				return 1;
+			}
+			if( write(fd, &gbyte, sizeof(uint8_t)) == -1 ) {
+				std::clog << "Error: failed to write to file\n";
+				return 1;
+			}
+			if( write(fd, &rbyte, sizeof(uint8_t)) == -1 ) {
+				std::clog << "Error: failed to write to file\n";
+				return 1;
+			}
 		}
 
 		for(int i=0; i < padding; i++) {
-			write(fileDesriptor, &blank, sizeof(uint8_t));
+			write(fd, &blank, sizeof(uint8_t));
+			return 1;
 		}
-	}
-
-	if( close(fileDesriptor) == -1) {
-		std::clog << "Error while closing file\n";
 	}
 
 	return 0;

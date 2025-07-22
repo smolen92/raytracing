@@ -2,15 +2,29 @@
 #include "sphere.h"
 #include "camera.h"
 
+#include <string.h>
 #include <thread>
 
 /// \file
 
 /// \todo create readme
-/// \todo get the name for output file from argv
 /// \todo revision of the documentation - delete unnecessary doc, include the math equation used for calculation
 int main(int argc, char **argv) {
+	
+	char *output_filename;
+	char default_name[] = { "output.bmp" };
 
+	output_filename = default_name;
+
+	if( argc > 1 ) {
+		for( int i=1; i < argc; i++) {
+			if( strncmp("-o=", argv[i], 3) == 0 ) {
+				output_filename = &argv[i][3];
+				break;
+			}
+		}
+	}
+	
 	//world
 	hitlist world;
 
@@ -56,7 +70,7 @@ int main(int argc, char **argv) {
 	
 	color *output;
 	output = new color[cam.image_width*cam.image_height];
-
+	
 	//render
 	for( uint32_t i=0; i < threads.size(); i++) {
 		threads[i] = std::thread(&camera::render, &cam, world, std::ref(output), i);
@@ -66,7 +80,7 @@ int main(int argc, char **argv) {
 		threads[i].join();
 	}
 	
-	cam.save_bmp("output.bmp", &output[0]);
+	cam.save(output_filename, output);
 	
 	delete[] output;
 	output = nullptr;
