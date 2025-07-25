@@ -1,13 +1,6 @@
 #include "hitlist.h"
 
-hitlist::hitlist() {
-}
-
-hitlist::hitlist(hittable* object) {
-	this->add(object);
-}
-	
-void hitlist::clear() {
+hitlist::~hitlist() {
 	while(!objects.empty()) {
 		delete objects.back();
 		objects.pop_back();

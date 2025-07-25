@@ -85,8 +85,6 @@ int main(int argc, char **argv) {
 	delete[] output;
 	output = nullptr;
 
-	world.clear();
-
 	return 0;
 }
 

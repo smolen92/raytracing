@@ -14,7 +14,6 @@ using color = vec3;
  * @brief write and convert color to output
  * @param pixel_color color to convert and write
  * @param out pointer to ouput vec
- * \todo check this if it could be merged with linear to gamma function
  */
 void write_color(vec3 *out, const color& pixel_color);
 

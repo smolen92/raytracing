@@ -9,24 +9,11 @@
 
 /**
  * @brief class for storing all object, that can be hit
- * \todo does the vector of object need to be public?
  */
 class hitlist : public hittable {
 	public:
-		/// \cond
-		std::vector<hittable*> objects;
-	
-		hitlist();
-		/// \endcond
-
-		/// \todo find out if this constructor is actually used
-		hitlist(hittable* object);
 		
-		/**
-		 * @brief will clear all objects
-		 * \todo turn this into a desctructor
-		 */
-		void clear();
+		~hitlist();
 
 		/**
 		 * @brief will add new object to the vector
@@ -46,6 +33,11 @@ class hitlist : public hittable {
 		 * @return false if ray hasn't hit anything
 		 */
 		bool hit(const ray& r, interval ray_t, hit_record& rec) const override;
+
+	private:
+		/// \cond
+		std::vector<hittable*> objects;
+		/// \endcond
 };
 
 #endif
