@@ -12,7 +12,10 @@
  */
 class hitlist : public hittable {
 	public:
-		
+		/**
+		 * \todo move to desctructor
+		 * \bug when this was moved to destructor it led to seg fault
+		 */
 		void clear();
 
 		/**
