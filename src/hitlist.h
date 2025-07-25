@@ -13,7 +13,7 @@
 class hitlist : public hittable {
 	public:
 		
-		~hitlist();
+		void clear();
 
 		/**
 		 * @brief will add new object to the vector
