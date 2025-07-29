@@ -27,11 +27,11 @@ metal::metal(const color& albedo, float fuzz) {
 }
 
 bool metal::scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const {
-	vec3 reflected = reflect(r_in.direction(), rec.normal);
+	vec3 reflected = reflect(r_in.direction, rec.normal);
 	reflected = get_unit_vector(reflected) + (fuzz * random_unit_vector());
 	scattered = ray(rec.p, reflected);
 	attenuation = albedo;
-	return (dot(scattered.direction(), rec.normal) > 0);
+	return (dot(scattered.direction, rec.normal) > 0);
 }
 
 dielectric::dielectric(float refraction_index) {
@@ -42,7 +42,7 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, color& attenuat
 	attenuation = color(1.0,1.0,1.0);
 	float ri = rec.front_face ? (1.0/refraction_index) : refraction_index;
 
-	vec3 unit_direction = get_unit_vector(r_in.direction());
+	vec3 unit_direction = get_unit_vector(r_in.direction);
 	float cos_theta = std::fmin(dot(-unit_direction, rec.normal),1.0);
 	float sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
 

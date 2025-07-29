@@ -25,11 +25,11 @@ class camera {
 		/**
 		 * @param r ray that you want the color for
 		 * @param depth current depth of the ray (maximum number of bounce per ray) 
-		 * @param world reference to hittable class that store all objects that can be hit
+		 * @param world pointer to hittable class that store all objects that can be hit
 		 * 
 		 * @return color for a given ray
 		 */
-		color ray_color(const ray& r, int depth, const hittable& world) const;
+		color ray_color(const ray& r, int depth, const hittable* world) const;
 		
 		/**
 		 * @param i x coordinate of pixel
@@ -47,7 +47,7 @@ class camera {
 		/**
 		 * @brief generate raytraced image
 		 *
-		 * @param world reference to world class with object to render
+		 * @param world pointer to world class with object to render
 		 * @param output pointer to output buffer
 		 * @param thread_id id of thread that is rendering scaline
 		 * 
@@ -55,9 +55,10 @@ class camera {
 		 * current_scanline is used for multithreading to avoid race condition
 		 * therad_id is used only for logging purpose\
 		 *
-		 * \bug if samples_per_pixel is small render will produce darker image - pixel_samples_scale is calculated in initialize function, if samples_per_pixel is assigned another value, pixel_samples_scale isn't recalculated 
+		 * \bug if samples_per_pixel is small render will produce darker image - pixel_samples_scale is calculated in initialize function, if samples_per_pixel is assigned another value, pixel_samples_scale isn't recalculated
+		 * \todo change output to from 1d array to 2d array
 		 */
-		void render(const hittable& world, color *output, int thread_id); 
+		void render(const hittable* world, color *output, int thread_id); 
 		
 
 		/**

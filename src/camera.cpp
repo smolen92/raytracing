@@ -1,7 +1,9 @@
 #include "camera.h"
 
-void camera::render(const hittable& world, color *output, int thread_id) {
-	
+void camera::render(const hittable* world, color *output, int thread_id) {
+
+	if(world == nullptr) return;
+
 	while(current_scanline < this->image_height) {
 		mut.lock();
 		
@@ -71,14 +73,16 @@ void camera::initialize() {
 	defocus_disk_v = v * defocus_radius;
 }
 
-color camera::ray_color(const ray& r, int depth, const hittable& world) const {
-	
+color camera::ray_color(const ray& r, int depth, const hittable* world) const {
+
+	if(world == nullptr) return color(0,0,0);
+
 	if (depth <= 0) {
 		return color(0,0,0);
 	}
 
 	hit_record rec;
-	if (world.hit(r,interval(0.001,infinity),rec)) {
+	if (world->hit(r,interval(0.001,infinity),rec)) {
 		ray scattered;
 		color attenuation;
 		
@@ -90,7 +94,7 @@ color camera::ray_color(const ray& r, int depth, const hittable& world) const {
 
 	}
 
-	vec3 unit_direction = get_unit_vector(r.direction());
+	vec3 unit_direction = get_unit_vector(r.direction);
 	float a = 0.5*(unit_direction.y + 1.0);
 	return (1.0-a)*color(1.0,1.0,1.0)+a*color(0.5,0.7,1.0);
 }

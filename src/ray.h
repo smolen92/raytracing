@@ -7,8 +7,6 @@
 
 /** 
  * @brief class for handling ray
- *
- * \todo check if the function orgin() and direction() are necessary and move orig and dir to public
  */
 class ray {
 	public:
@@ -35,13 +33,8 @@ class ray {
 		 */
 		point3 at(float t) const;
 		
-		/// \cond
-		const point3& origin() const;
-		const vec3& direction() const;
-		/// \endcond
-	private:
-		point3 orig;
-		vec3 dir;
+		point3 origin;
+		vec3 direction;
 };
 
 #endif

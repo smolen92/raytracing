@@ -7,8 +7,15 @@
 
 /// \file
 
-/// \todo create readme
+/**
+ * \mainpage
+ * 
+ * raytracing based on https://raytracing.github.io/books/RayTracingInOneWeekend.html
+ *
+ */
+
 /// \todo revision of the documentation - delete unnecessary doc, include the math equation used for calculation
+/// \todo argument for number for the numbers of thread to use, default value half of available threads
 int main(int argc, char **argv) {
 	
 	char *output_filename;
@@ -73,7 +80,7 @@ int main(int argc, char **argv) {
 	
 	//render
 	for( uint32_t i=0; i < threads.size(); i++) {
-		threads[i] = std::thread(&camera::render, &cam, world, std::ref(output), i);
+		threads[i] = std::thread(&camera::render, &cam, &world, output, i);
 	}
 	
 	for(uint32_t i=0; i < threads.size(); i++) {
@@ -85,8 +92,6 @@ int main(int argc, char **argv) {
 	delete[] output;
 	output = nullptr;
 	
-	world.clear();
-
 	return 0;
 }
 

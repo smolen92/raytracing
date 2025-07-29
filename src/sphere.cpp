@@ -7,9 +7,9 @@ sphere::sphere(const point3& center, float radius, material* mat) {
 }
 
 bool sphere::hit(const ray& r, interval ray_t, hit_record& rec) const {
-	vec3 oc = center - r.origin();
-	float a = r.direction().length_squared();
-	float h = dot(r.direction(), oc);
+	vec3 oc = center - r.origin;
+	float a = r.direction.length_squared();
+	float h = dot(r.direction, oc);
 	float c = oc.length_squared() - radius*radius;
 	float discriminant = h*h - a*c;
 	

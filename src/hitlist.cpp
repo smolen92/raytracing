@@ -1,6 +1,6 @@
 #include "hitlist.h"
 
-void hitlist::clear() {
+hitlist::~hitlist() {
 	while(!objects.empty()) {
 		delete objects.back();
 		objects.pop_back();
