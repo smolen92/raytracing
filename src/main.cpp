@@ -15,23 +15,42 @@
  */
 
 /// \todo revision of the documentation - delete unnecessary doc, include the math equation used for calculation
-/// \todo argument for number for the numbers of thread to use, default value half of available threads
 int main(int argc, char **argv) {
 	
 	char *output_filename;
 	char default_name[] = { "output.bmp" };
 
 	output_filename = default_name;
+	
+	int available_threads = std::thread::hardware_concurrency();
+	int thread_count;
 
 	if( argc > 1 ) {
 		for( int i=1; i < argc; i++) {
 			if( strncmp("-o=", argv[i], 3) == 0 ) {
 				output_filename = &argv[i][3];
-				break;
+				continue;
+			}
+
+			if( strncmp("-t=", argv[i], 3) == 0) {
+				try {
+					thread_count = std::stoi(&argv[i][3]);
+				}
+				catch (std::invalid_argument const& ex) {
+					std::clog << "invalid argument\n";
+				}
+				catch (std::out_of_range const& ex) {
+					std::clog << "Number is of of range\n";
+				}
+				continue;
 			}
 		}
 	}
 	
+	if( thread_count > available_threads ) {
+		thread_count = available_threads/2;
+	}
+
 	//world
 	hitlist world;
 
@@ -71,12 +90,15 @@ int main(int argc, char **argv) {
 	camera cam;
 
 	cam.initialize();
-	
-	int cores_count = std::thread::hardware_concurrency();
-	std::vector<std::thread> threads(cores_count);
-	
-	color *output;
-	output = new color[cam.image_width*cam.image_height];
+
+	color **output;
+	output = new color*[cam.image_width];
+
+	for(int i=0; i < cam.image_width; i++) {
+		output[i] = new color[cam.image_height];
+	}
+
+	std::vector<std::thread> threads(thread_count);
 	
 	//render
 	for( uint32_t i=0; i < threads.size(); i++) {
@@ -87,8 +109,11 @@ int main(int argc, char **argv) {
 		threads[i].join();
 	}
 	
-	cam.save(output_filename, output);
+	cam.save(output_filename, (const color**)output);
 	
+	for(int i=0; i < cam.image_width; i++) {
+		delete[] output[i];
+	}
 	delete[] output;
 	output = nullptr;
 	

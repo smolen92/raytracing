@@ -9,6 +9,7 @@
 #include <string.h>
 #include <mutex>
 #include <cstdint>
+#include <errno.h>
 
 /// \file
 
@@ -56,9 +57,8 @@ class camera {
 		 * therad_id is used only for logging purpose\
 		 *
 		 * \bug if samples_per_pixel is small render will produce darker image - pixel_samples_scale is calculated in initialize function, if samples_per_pixel is assigned another value, pixel_samples_scale isn't recalculated
-		 * \todo change output to from 1d array to 2d array
 		 */
-		void render(const hittable* world, color *output, int thread_id); 
+		void render(const hittable* world, color **output, int thread_id); 
 		
 
 		/**
@@ -71,9 +71,8 @@ class camera {
 		 * @return 0 at success
 		 * @return 1 at failure
 		 *
-		 * \todo do not overwrite file if it already exit, but create one with number sufix
 		 */
-		int save(const char* filename, const color *output);
+		int save(const char* filename, const color **output);
 		/**
 		 *
 		 * @brief save the generated image to a file in ppm format
@@ -85,7 +84,7 @@ class camera {
 		 * @return 1 at failure
 		 *
 		 */
-		int save_ppm(const int fd, const color *output);
+		int save_ppm(const int fd, const color **output);
 		/**
 		 *
 		 * @brief save the generated image to a file in bmp format (24-bit bitmap)
@@ -97,7 +96,7 @@ class camera {
 		 * @return 1 at failure
 		 * 
 		 */
-		int save_bmp(const int fd, const color *output);
+		int save_bmp(const int fd, const color **output);
 		
 		/// \cond
 		int image_width;

@@ -1,6 +1,6 @@
 #include "camera.h"
 
-void camera::render(const hittable* world, color *output, int thread_id) {
+void camera::render(const hittable* world, color **output, int thread_id) {
 
 	if(world == nullptr) return;
 
@@ -19,7 +19,7 @@ void camera::render(const hittable* world, color *output, int thread_id) {
 				ray r = get_ray(i, thread_scanline);
 				pixel_color += ray_color(r, max_depth, world);
 			}
-			write_color(&output[thread_scanline*this->image_width + i], pixel_samples_scale * pixel_color);
+			write_color(&output[i][thread_scanline], pixel_samples_scale * pixel_color);
 		}
 	}
 
@@ -118,7 +118,7 @@ point3 camera::defocus_disk_sample() const {
 	return center + (p.x * defocus_disk_u) + (p.y * defocus_disk_v);
 }
 
-int camera::save(const char* filename, const color *output) {
+int camera::save(const char* filename, const color **output) {
 
 	int fileDesriptor = open(filename, O_CREAT|O_WRONLY|O_TRUNC, 0664);
 	if( fileDesriptor == -1) {
@@ -154,7 +154,7 @@ int camera::save(const char* filename, const color *output) {
 
 }
 
-int camera::save_ppm(const int fd, const color *output) {
+int camera::save_ppm(const int fd, const color **output) {
 	
 	std::string head = "P3\n" + std::to_string(this->image_width) + " " + std::to_string(this->image_height) + "\n255\n";
 	if( write(fd, head.c_str(), head.length()) == -1) {
@@ -162,18 +162,20 @@ int camera::save_ppm(const int fd, const color *output) {
 		return 1;
 	}
 
-	for(int i=0; i < this->image_width*this->image_height; i++) {
+	for(int j=0; j < this->image_height; j++) {
+		for(int i=0; i < this->image_width; i++) {
 		
-		static const interval intensity(0.000,0.999);
-		int rbyte = int(256 * intensity.clamp(output[i].x));
-		int gbyte = int(256 * intensity.clamp(output[i].y));
-		int bbyte = int(256 * intensity.clamp(output[i].z));
+			static const interval intensity(0.000,0.999);
+			int rbyte = int(256 * intensity.clamp(output[i][j].x));
+			int gbyte = int(256 * intensity.clamp(output[i][j].y));
+			int bbyte = int(256 * intensity.clamp(output[i][j].z));
 		
-		std::string temp = std::to_string(rbyte) + " " + std::to_string(gbyte) + " " + std::to_string(bbyte) + "\n";
+			std::string temp = std::to_string(rbyte) + " " + std::to_string(gbyte) + " " + std::to_string(bbyte) + "\n";
 
-		if( write(fd, temp.c_str(), temp.length()) == -1) {
-			std::clog << "Error: failed to write to file\n";
-			return 1;
+			if( write(fd, temp.c_str(), temp.length()) == -1) {
+				std::clog << "Error: failed to write to file\n";
+				return 1;
+			}
 		}
 	}
 
@@ -181,7 +183,7 @@ int camera::save_ppm(const int fd, const color *output) {
 	
 }
 
-int camera::save_bmp(const int fd, const color *output) {
+int camera::save_bmp(const int fd, const color **output) {
 	
 	uint8_t header[] = {//BMP Header
 			0x42, 0x4D, //ID field
@@ -239,9 +241,9 @@ int camera::save_bmp(const int fd, const color *output) {
 		for(int i=0; i < image_width; i++) {
 		
 			static const interval intensity(0.000,0.999);
-			int rbyte = int(256 * intensity.clamp(output[i + j*image_width].x));
-			int gbyte = int(256 * intensity.clamp(output[i + j*image_width].y));
-			int bbyte = int(256 * intensity.clamp(output[i + j*image_width].z));
+			int rbyte = int(256 * intensity.clamp(output[i][j].x));
+			int gbyte = int(256 * intensity.clamp(output[i][j].y));
+			int bbyte = int(256 * intensity.clamp(output[i][j].z));
 		
 			if( write(fd, &bbyte, sizeof(uint8_t)) == -1 ) {
 				std::clog << "Error: failed to write to file\n";

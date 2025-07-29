@@ -2,7 +2,7 @@
 
 A simple raytracing image generator based on https://raytracing.github.io/books/RayTracingInOneWeekend.html
 
-## Instalation
+## Compilation 
 
 1. clone the repository
 2. run make 
@@ -13,8 +13,9 @@ make
 ## Usage
 
 ```bash
-ray.out -o=<filename>
+ray.out -o=<filename> -t=<thread_count>
 ```
 
 filename specified must have .bmp or .ppm extension, if no filename is specified output is saved to file output.bmp
 
+if thread count isn't specified or wrong input is entered (string instead of integer, more thread that are available) half of available thread will be used
