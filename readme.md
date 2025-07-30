@@ -18,4 +18,5 @@ ray.out -o=<filename> -t=<thread_count>
 
 filename specified must have .bmp or .ppm extension, if no filename is specified output is saved to file output.bmp
 
-if thread count isn't specified or wrong input is entered (string instead of integer, more thread that are available) half of available thread will be used
+if thread count isn't specified or wrong input is entered (string instead of integer, more thread than are available) half of available thread will be used
+if all keyword is used as parameter, all available threads are used
