@@ -9,10 +9,7 @@
 
 /**
  * @brief class for 3 dimensional vector
- *
- * \todo move some of the function outside class into the class like the operator
  */
-
 class vec3 {
 	public:
 		/// \cond

@@ -13,7 +13,7 @@
  * raytracing based on https://raytracing.github.io/books/RayTracingInOneWeekend.html
  *
  */
-
+/// \todo code clean-up
 /// \todo revision of the documentation - delete unnecessary doc, include the math equation used for calculation
 int main(int argc, char **argv) {
 	
@@ -34,7 +34,11 @@ int main(int argc, char **argv) {
 
 			if( strncmp("-t=", argv[i], 3) == 0) {
 				try {
-					thread_count = std::stoi(&argv[i][3]);
+					if( strcmp(&argv[i][3], "all") == 0 ) {
+						thread_count = available_threads;
+					} else {
+						thread_count = std::stoi(&argv[i][3]);
+					}
 				}
 				catch (std::invalid_argument const& ex) {
 					std::clog << "invalid argument\n";
@@ -90,7 +94,7 @@ int main(int argc, char **argv) {
 	camera cam;
 
 	cam.initialize();
-
+	
 	color **output;
 	output = new color*[cam.image_width];
 
