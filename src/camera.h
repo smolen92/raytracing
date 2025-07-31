@@ -56,7 +56,6 @@ class camera {
 		 * current_scanline is used for multithreading to avoid race condition
 		 * therad_id is used only for logging purpose\
 		 *
-		 * \bug if samples_per_pixel is small render will produce darker image - pixel_samples_scale is calculated in initialize function, if samples_per_pixel is assigned another value, pixel_samples_scale isn't recalculated
 		 */
 		void render(const hittable* world, color **output, int thread_id); 
 		
@@ -116,14 +115,14 @@ class camera {
 		point3 pixel00_loc;
 		vec3 pixel_delta_u;
 		vec3 pixel_delta_v;
-		float pixel_samples_scale;
 		vec3 u,v,w;
 		vec3 defocus_disk_u;
 		vec3 defocus_disk_v;
-		int current_scanline;
 
 		point3 defocus_disk_sample() const;
+		
 		std::mutex mut;
+		int current_scanline;
 };
 
 #endif

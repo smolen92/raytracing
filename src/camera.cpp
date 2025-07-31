@@ -19,7 +19,7 @@ void camera::render(const hittable* world, color **output, int thread_id) {
 				ray r = get_ray(i, thread_scanline);
 				pixel_color += ray_color(r, max_depth, world);
 			}
-			write_color(&output[i][thread_scanline], pixel_samples_scale * pixel_color);
+			write_color(&output[i][thread_scanline], pixel_color/samples_per_pixel);
 		}
 	}
 
@@ -40,7 +40,7 @@ void camera::initialize() {
 	image_height = (int)(image_width / aspect_ratio);
 	image_height = (image_height < 1) ? 1 : image_height;
 
-	samples_per_pixel = 500;
+	samples_per_pixel = 100;
 	max_depth = 50;
 	vfov = 20;
 	
@@ -64,8 +64,6 @@ void camera::initialize() {
 	
 	point3 viewport_upper_left = center - (focus_dist * w) - viewport_u/2 - viewport_v/2;
 	pixel00_loc = viewport_upper_left + 0.5*(pixel_delta_u + pixel_delta_v);
-
-	pixel_samples_scale = 1.0 / samples_per_pixel;
 
 
 	float defocus_radius = focus_dist * std::tan(deg_to_rad(defocus_angle/2));
